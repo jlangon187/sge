@@ -76,11 +76,11 @@
                         <i class="fas fa-user"></i>
                     </div>
                 </div>
-                <a href="{{ url_for('logout') }}" class="btn-logout" title="Cerrar Sesión">
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout" title="Cerrar Sesión">
                     <i class="fas fa-power-off"></i>
                 </a>
             {% else %}
-                <a href="{{ url_for('login') }}" class="btn-login-header">Iniciar Sesión</a>
+                <a href="{{ url_for('auth.login') }}" class="btn-login-header">Iniciar Sesión</a>
             {% endif %}
         </div>
 
