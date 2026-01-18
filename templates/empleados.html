@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Equipo{% endblock %}
+
+{% block page_content %}
+<div class="row" style="margin-top: 20px; margin-bottom: 20px;">
+    <div class="col-md-6">
+        <h1 style="margin:0; font-weight:800; color:#111827;">
+            <i class="fas fa-users" style="color:#4f46e5;"></i> Equipo de Trabajo
+        </h1>
+        <p class="text-muted">Gestiona el acceso y horarios de tus empleados.</p>
+    </div>
+    <div class="col-md-6 text-right" style="margin-top: 10px;">
+        <a href="{{ url_for('crear_empleado') }}" class="btn btn-primary btn-lg" style="border-radius: 50px; padding: 10px 25px; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);">
+            <i class="fas fa-user-plus"></i> Nuevo Empleado
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default" style="border: none; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); border-radius: 15px; overflow: hidden;">
+
+            <div class="table-responsive">
+                <table class="table table-empleados" style="margin-bottom: 0;">
+                    <thead style="background-color: #f3f4f6; color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">
+                        <tr>
+                            <th style="padding: 15px 25px;">Empleado</th>
+                            <th>Contacto</th>
+                            <th>Rol & Horario</th>
+                            <th>Ubicación</th>
+                            <th class="text-right" style="padding-right: 25px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for empleado in empleados %}
+                        <tr>
+                            <td style="padding: 15px 25px;">
+                                <div class="user-profile-flex">
+                                    <div class="avatar-circle">
+                                        {{ empleado.nombre[0] | upper }}
+                                    </div>
+                                    <div class="user-info-text">
+                                        <h4>{{ empleado.nombre }} {{ empleado.apellidos }}</h4>
+                                        <small><i class="fas fa-id-card"></i> {{ empleado.nif }}</small>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div style="display: flex; flex-direction: column; gap: 3px;">
+                                    <span style="color: #374151; font-weight: 500;">
+                                        <i class="fas fa-envelope text-muted"></i> {{ empleado.email }}
+                                    </span>
+                                    {% if empleado.telef %}
+                                        <span class="text-muted" style="font-size: 12px;">
+                                            <i class="fas fa-phone-alt"></i> {{ empleado.telef }}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted" style="font-size: 12px; font-style: italic;">Sin teléfono</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <td>
+                                {% if empleado.rol.nombre_rol == 'Superadministrador' %}
+                                    <span class="label-modern label-super">SUPERADMIN</span>
+                                {% elif empleado.rol.nombre_rol == 'Administrador' %}
+                                    <span class="label-modern label-admin">ADMIN</span>
+                                {% else %}
+                                    <span class="label-modern label-worker">TRABAJADOR</span>
+                                {% endif %}
+
+                                <div style="margin-top: 5px; font-size: 12px; color: #6b7280;">
+                                    <i class="far fa-clock"></i>
+                                    {% if empleado.horario %}
+                                        {{ empleado.horario.nombre_horario }}
+                                    {% else %}
+                                        <span class="text-danger">Sin Horario</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <td>
+                                {% if empleado.localidad %}
+                                    <span style="color: #4b5563;"><i class="fas fa-map-marker-alt text-danger"></i> {{ empleado.localidad }}</span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-right" style="padding-right: 25px;">
+                                <a href="{{ url_for('editar_empleado', id=empleado.id_trabajador) }}"
+                                   class="btn btn-default btn-sm"
+                                   title="Editar"
+                                   style="border-radius: 50%; width: 35px; height: 35px; padding: 0; line-height: 35px; border: 1px solid #e5e7eb; color: #d97706;">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+
+                                <a href="{{ url_for('borrar_empleado', id=empleado.id_trabajador) }}"
+                                   class="btn btn-default btn-sm"
+                                   title="Eliminar"
+                                   onclick="return confirm('¿Seguro que deseas eliminar a {{ empleado.nombre }}? Esta acción no se puede deshacer.');"
+                                   style="border-radius: 50%; width: 35px; height: 35px; padding: 0; line-height: 35px; border: 1px solid #e5e7eb; color: #ef4444; margin-left: 5px;">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center" style="padding: 50px;">
+                                <div style="color: #9ca3af;">
+                                    <i class="fas fa-user-slash" style="font-size: 40px; margin-bottom: 15px;"></i>
+                                    <h4>No hay empleados registrados en esta empresa.</h4>
+                                    <p>Pulsa en "Nuevo Empleado" para comenzar.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

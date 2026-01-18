@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Panel Superadministrador{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Gestión Global de Empresas</h1>
+    <a href="{{ url_for('crear_empresa_admin') }}" class="btn btn-primary">Registrar Nueva Empresa</a>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre Comercial</th>
+            <th>CIF</th>
+            <th>Empleados</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for emp in empresas %}
+        <tr>
+            <td>{{ emp.id_empresa }}</td>
+            <td>{{ emp.nombrecomercial }}</td>
+            <td>{{ emp.cif }}</td>
+            <td><span class="badge">{{ emp.empleados|length }}</span></td>
+            <td>
+                {% if emp.empleados|length == 0 %}
+                    <a href="{{ url_for('borrar_empresa_admin', id=emp.id_empresa) }}"
+                       class="btn btn-danger btn-xs"
+                       onclick="return confirm('¿Eliminar empresa definitivamente?')">Eliminar</a>
+                {% else %}
+                    <button class="btn btn-default btn-xs" disabled title="Tiene empleados">Eliminar</button>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

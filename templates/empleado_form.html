@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>
+        {% if editando %}
+            <i class="fas fa-user-edit"></i> Editando a: <small>{{ empleado.nombre }} {{ empleado.apellidos }}</small>
+        {% else %}
+            <i class="fas fa-user-plus"></i> Nuevo Empleado
+        {% endif %}
+    </h1>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+
+                <form method="POST" class="form" role="form">
+                    {{ form.hidden_tag() }}
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="text-primary" style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:10px;">
+                                <i class="fas fa-id-card"></i> Datos Personales
+                            </h4>
+
+                            <div class="row">
+                                <div class="col-md-6">{{ wtf.form_field(form.nif) }}</div>
+                                <div class="col-md-6">{{ wtf.form_field(form.telef) }}</div>
+                            </div>
+
+                            {{ wtf.form_field(form.nombre) }}
+                            {{ wtf.form_field(form.apellidos) }}
+                            {{ wtf.form_field(form.email) }}
+
+                            {% if not editando %}
+                                <div class="form-group required">
+                                    <label class="control-label">Contraseña</label>
+                                    {{ form.passw(class="form-control") }}
+                                </div>
+                            {% else %}
+                                <div class="form-group">
+                                    <label class="control-label">Seguridad</label><br>
+                                    <button type="button" class="btn btn-info btn-block" data-toggle="modal" data-target="#passwordModal">
+                                        <i class="fas fa-key"></i> Gestionar Contraseña del Empleado
+                                    </button>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6" style="border-left: 1px solid #f0f0f0;">
+                            <h4 class="text-primary" style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:10px;">
+                                <i class="fas fa-briefcase"></i> Configuración y Dirección
+                            </h4>
+
+                            <div class="well well-sm">
+                                <div class="row">
+                                    <div class="col-md-6">{{ wtf.form_field(form.id_rol) }}</div>
+                                    <div class="col-md-6">{{ wtf.form_field(form.id_horario) }}</div>
+                                </div>
+                            </div>
+
+                            {{ wtf.form_field(form.calle) }}
+
+                            <div class="row">
+                                <div class="col-md-6">{{ wtf.form_field(form.localidad) }}</div>
+                                <div class="col-md-6">{{ wtf.form_field(form.provincia) }}</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">{{ wtf.form_field(form.cp) }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{{ url_for('lista_empleados') }}" class="btn btn-default btn-block">Cancelar</a>
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.submit(class="btn btn-success btn-block") }}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if editando %}
+<div class="modal fade" id="passwordModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #3b82f6; color: white; border-radius: 5px 5px 0 0;">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" style="color:white;">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel"><i class="fas fa-lock"></i> Cambiar Contraseña</h4>
+      </div>
+
+      <form method="POST" action="{{ url_for('cambiar_password_empleado', id=empleado.id_trabajador) }}">
+          <div class="modal-body">
+            {{ form_pass.hidden_tag() }}
+            <p>Introduce la nueva contraseña para <strong>{{ empleado.nombre }}</strong>:</p>
+
+            <div class="input-group">
+                {{ form_pass.password(class="form-control", id="newPasswordInput", placeholder="Nueva contraseña...") }}
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" onclick="togglePassword()">
+                        <i class="fas fa-eye" id="toggleIcon"></i>
+                    </button>
+                </span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            {{ form_pass.submit(class="btn btn-primary") }}
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function togglePassword() {
+  var x = document.getElementById("newPasswordInput");
+  var icon = document.getElementById("toggleIcon");
+  if (x.type === "password") {
+    x.type = "text";
+    icon.classList.remove("fa-eye");
+    icon.classList.add("fa-eye-slash");
+  } else {
+    x.type = "password";
+    icon.classList.remove("fa-eye-slash");
+    icon.classList.add("fa-eye");
+  }
+}
+</script>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Directorio de Empresas{% endblock %}
+
+{% block page_content %}
+<div class="row" style="margin-top: 20px; margin-bottom: 20px;">
+    <div class="col-md-6">
+        <h1 style="margin:0; font-weight:800; color:#111827;">
+            <i class="fas fa-building" style="color:#2563eb;"></i> Directorio de Empresas
+        </h1>
+        <p class="text-muted">Administra las organizaciones registradas en el sistema.</p>
+    </div>
+
+    <div class="col-md-6 text-right" style="margin-top: 10px;">
+        <a href="{{ url_for('crear_empresa_admin') }}" class="btn btn-success btn-lg" style="border-radius: 50px; padding: 10px 25px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">
+            <i class="fas fa-plus-circle"></i> Nueva Empresa
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default" style="border: none; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); border-radius: 15px; overflow: hidden;">
+
+            <div class="table-responsive">
+                <table class="table table-empleados" style="margin-bottom: 0;">
+                    <thead style="background-color: #f9fafb; color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">
+                        <tr>
+                            <th style="padding: 15px 25px;">Organización</th>
+                            <th>Ubicación</th>
+                            <th>Contacto</th>
+                            <th>Plantilla</th>
+                            <th class="text-right" style="padding-right: 25px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for empresa in empresas %}
+                        <tr>
+                            <td style="padding: 15px 25px;">
+                                <div class="user-profile-flex">
+                                    <div class="company-icon-box">
+                                        <i class="fas fa-city"></i>
+                                    </div>
+                                    <div class="user-info-text">
+                                        <h4 style="font-size: 16px;">{{ empresa.nombrecomercial }}</h4>
+                                        <small style="color: #6b7280; font-family: monospace; font-size: 12px;">
+                                            <i class="fas fa-fingerprint"></i> CIF: {{ empresa.cif }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="color: #374151; font-weight: 500;">
+                                        {{ empresa.localidad }}
+                                    </span>
+                                    <span class="text-muted" style="font-size: 12px;">
+                                        {{ empresa.provincia }} ({{ empresa.cp }})
+                                    </span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div style="display: flex; flex-direction: column; gap: 3px;">
+                                    <span style="font-size: 13px;">
+                                        <i class="fas fa-envelope text-muted"></i> {{ empresa.email }}
+                                    </span>
+                                    {% if empresa.telefono %}
+                                    <span style="font-size: 12px; color: #6b7280;">
+                                        <i class="fas fa-phone text-muted"></i> {{ empresa.telefono }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <td>
+                                {% if empresa.empleados|length > 0 %}
+                                    <span class="badge-count" style="background-color: #dbeafe; color: #1e40af;">
+                                        <i class="fas fa-users"></i> {{ empresa.empleados|length }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted" style="font-size: 12px; font-style: italic;">Sin empleados</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-right" style="padding-right: 25px;">
+
+                                <a href="{{ url_for('seleccionar_empresa', id=empresa.id_empresa) }}"
+                                   class="btn btn-primary btn-sm"
+                                   title="Entrar a Gestionar esta Empresa"
+                                   style="border-radius: 20px; padding: 5px 15px; margin-right: 5px;">
+                                    <i class="fas fa-sign-in-alt"></i> Gestionar
+                                </a>
+
+                                {% if empresa.empleados|length > 0 %}
+                                    <button class="btn btn-default btn-sm"
+                                            disabled
+                                            title="No se puede borrar: Tiene empleados activos"
+                                            style="border-radius: 50%; width: 35px; height: 35px; padding: 0; line-height: 35px; border: 1px solid #e5e7eb; cursor: not-allowed; opacity: 0.5;">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                {% else %}
+                                    <a href="{{ url_for('borrar_empresa_admin', id=empresa.id_empresa) }}"
+                                       class="btn btn-default btn-sm"
+                                       title="Eliminar Empresa"
+                                       onclick="return confirm('ATENCIÓN: ¿Estás seguro de eliminar {{ empresa.nombrecomercial }} permanentemente?');"
+                                       style="border-radius: 50%; width: 35px; height: 35px; padding: 0; line-height: 35px; border: 1px solid #fee2e2; color: #ef4444; background: #fef2f2;">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center" style="padding: 50px;">
+                                <div style="color: #9ca3af;">
+                                    <i class="fas fa-building" style="font-size: 40px; margin-bottom: 15px; opacity: 0.5;"></i>
+                                    <h4>No hay empresas registradas.</h4>
+                                    <p>Pulsa en "Nueva Empresa" para comenzar.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

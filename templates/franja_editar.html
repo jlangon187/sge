@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Editar Franja{% endblock %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fas fa-clock"></i> Editar Franja Horaria</h3>
+            </div>
+            <div class="panel-body">
+                <p class="text-muted">Modificando horario para: <strong>{{ franja.horario.nombre_horario }}</strong></p>
+                <hr>
+
+                {{ wtf.quick_form(form, button_map={'submit': 'warning btn-block'}) }}
+
+                <br>
+                <a href="{{ url_for('detalle_horario', id=franja.id_horario) }}" class="btn btn-default btn-block">Cancelar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
