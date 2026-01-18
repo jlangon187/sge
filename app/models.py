@@ -1,4 +1,4 @@
-from extensions import db
+from . import db
 
 # 1. Tabla Empresa
 class Empresa(db.Model):
