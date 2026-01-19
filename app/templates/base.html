@@ -21,21 +21,21 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">
                     <i class="fas fa-layer-group"></i> PORTAL DE GESTIÓN
                 </a>
             </div>
 
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="/">Inicio</a></li>
+                    <li><a href="{{ url_for('main.index') }}">Inicio</a></li>
 
                     {% if session.get('user_id') %}
 
                         {% if session.get('empresa_id') %}
-                            <li><a href="{{ url_for('gestion_empresa') }}">Mi Empresa</a></li>
-                            <li><a href="{{ url_for('lista_empleados') }}">Empleados</a></li>
-                            <li><a href="{{ url_for('lista_horarios') }}">Horarios</a></li>
+                            <li><a href="{{ url_for('empresas.gestion_empresa') }}">Mi Empresa</a></li>
+                            <li><a href="{{ url_for('empleados.lista_empleados') }}">Empleados</a></li>
+                            <li><a href="{{ url_for('horarios.lista_horarios') }}">Horarios</a></li>
                         {% endif %}
                         {% if session.get('user_role') == 'Superadministrador' %}
                             <li class="dropdown">
@@ -43,10 +43,10 @@
                                     SUPERADMIN <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="{{ url_for('lista_empresas') }}">Gestionar Empresas</a></li>
-                                    <li><a href="{{ url_for('lista_roles') }}">Gestionar Roles</a></li>
+                                    <li><a href="{{ url_for('empresas.lista_empresas') }}">Gestionar Empresas</a></li>
+                                    <li><a href="{{ url_for('roles.lista_roles') }}">Gestionar Roles</a></li>
                                     <li role="separator" class="divider"></li>
-                                    <li><a href="{{ url_for('lista_superadmins') }}">Equipo Superadmins</a></li>
+                                    <li><a href="{{ url_for('superadmins.lista_superadmins') }}">Equipo Superadmins</a></li>
                                 </ul>
                             </li>
                         {% endif %}

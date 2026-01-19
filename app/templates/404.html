@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Página no encontrada{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>404 - Página no encontrada</h1>
+    <p>Lo sentimos, la página que buscas no existe.</p>
+    <p><a href="{{ url_for('main.index') }}" class="btn btn-primary">Volver al inicio</a></p>
+</div>
+{% endblock %}
