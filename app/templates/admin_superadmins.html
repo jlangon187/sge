@@ -11,7 +11,7 @@
         <p class="text-muted">Gestión de usuarios con acceso global al sistema.</p>
     </div>
     <div class="col-md-5 text-right" style="margin-top: 10px;">
-        <a href="{{ url_for('crear_superadmin') }}" class="btn btn-danger btn-lg" style="border-radius: 50px; padding: 10px 25px; box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);">
+        <a href="{{ url_for('superadmins.crear_superadmin') }}" class="btn btn-danger btn-lg" style="border-radius: 50px; padding: 10px 25px; box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);">
             <i class="fas fa-user-plus"></i> Nuevo Superadmin
         </a>
     </div>
@@ -20,7 +20,6 @@
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default" style="border: none; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); border-radius: 15px; overflow: hidden;">
-
             <div class="table-responsive">
                 <table class="table table-empleados" style="margin-bottom: 0;">
                     <thead style="background-color: #fef2f2; color: #991b1b; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">
@@ -43,34 +42,24 @@
                                     <div class="user-info-text">
                                         <h4>{{ admin.nombre }} {{ admin.apellidos }}</h4>
                                         <small><i class="fas fa-id-card"></i> {{ admin.nif }}</small>
-
                                         {% if session.get('user_id') == admin.id_trabajador %}
                                             <span class="label label-info" style="margin-left: 5px; border-radius: 10px;">TÚ</span>
                                         {% endif %}
                                     </div>
                                 </div>
                             </td>
-
                             <td>
                                 <div style="display: flex; flex-direction: column; gap: 3px;">
-                                    <span style="color: #374151; font-weight: 500;">
-                                        <i class="fas fa-envelope text-muted"></i> {{ admin.email }}
-                                    </span>
+                                    <span style="color: #374151; font-weight: 500;"><i class="fas fa-envelope text-muted"></i> {{ admin.email }}</span>
                                     {% if admin.telef %}
-                                        <span class="text-muted" style="font-size: 12px;">
-                                            <i class="fas fa-phone-alt"></i> {{ admin.telef }}
-                                        </span>
+                                        <span class="text-muted" style="font-size: 12px;"><i class="fas fa-phone-alt"></i> {{ admin.telef }}</span>
                                     {% else %}
                                         <span class="text-muted" style="font-size: 12px; font-style: italic;">Sin teléfono</span>
                                     {% endif %}
                                 </div>
                             </td>
-
                             <td>
-                                <span class="label-modern label-super">
-                                    <i class="fas fa-crown"></i> SUPERADMIN
-                                </span>
-
+                                <span class="label-modern label-super"><i class="fas fa-crown"></i> SUPERADMIN</span>
                                 <div style="margin-top: 5px; font-size: 12px; color: #6b7280;">
                                     <i class="far fa-clock"></i>
                                     {% if admin.horario %}
@@ -80,22 +69,17 @@
                                     {% endif %}
                                 </div>
                             </td>
-
                             <td>
                                 {% if admin.localidad %}
-                                    <span style="color: #4b5563;">
-                                        <i class="fas fa-map-marker-alt text-danger"></i> {{ admin.localidad }}
-                                    </span>
-                                    <div style="font-size: 11px; color: #9ca3af; margin-left: 15px;">
-                                        {{ admin.provincia }}
-                                    </div>
+                                    <span style="color: #4b5563;"><i class="fas fa-map-marker-alt text-danger"></i> {{ admin.localidad }}</span>
+                                    <div style="font-size: 11px; color: #9ca3af; margin-left: 15px;">{{ admin.provincia }}</div>
                                 {% else %}
                                     <span class="text-muted">-</span>
                                 {% endif %}
                             </td>
 
                             <td class="text-right" style="padding-right: 25px;">
-                                <a href="{{ url_for('editar_superadmin', id=admin.id_trabajador) }}"
+                                <a href="{{ url_for('superadmins.editar_superadmin', id=admin.id_trabajador) }}"
                                    class="btn btn-default btn-sm"
                                    title="Editar Datos"
                                    style="border-radius: 50%; width: 35px; height: 35px; padding: 0; line-height: 35px; border: 1px solid #e5e7eb; color: #d97706;">
@@ -103,14 +87,11 @@
                                 </a>
 
                                 {% if session.get('user_id') == admin.id_trabajador %}
-                                    <button class="btn btn-default btn-sm"
-                                            disabled
-                                            title="No puedes borrar tu propio usuario"
-                                            style="border-radius: 50%; width: 35px; height: 35px; padding: 0; line-height: 35px; border: 1px solid #e5e7eb; color: #d1d5db; cursor: not-allowed; margin-left: 5px;">
+                                    <button class="btn btn-default btn-sm" disabled style="border-radius: 50%; width: 35px; height: 35px; padding: 0; line-height: 35px; border: 1px solid #e5e7eb; color: #d1d5db; cursor: not-allowed; margin-left: 5px;">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 {% else %}
-                                    <a href="{{ url_for('borrar_superadmin', id=admin.id_trabajador) }}"
+                                    <a href="{{ url_for('superadmins.borrar_superadmin', id=admin.id_trabajador) }}"
                                        class="btn btn-default btn-sm"
                                        title="Eliminar Superadmin"
                                        onclick="return confirm('¿PELIGRO: Estás seguro de eliminar al Superadministrador {{ admin.nombre }}?');"
@@ -126,7 +107,6 @@
                                 <div style="color: #9ca3af;">
                                     <i class="fas fa-user-shield" style="font-size: 40px; margin-bottom: 15px;"></i>
                                     <h4>Error: No se encontraron Superadministradores.</h4>
-                                    <p>Esto no debería pasar nunca si estás viendo esta pantalla.</p>
                                 </div>
                             </td>
                         </tr>

@@ -6,7 +6,7 @@
 {% block page_content %}
 <div class="page-header">
     <h1>Configurando: <small>{{ horario.nombre_horario }}</small></h1>
-    <a href="{{ url_for('lista_horarios') }}" class="btn btn-default">
+    <a href="{{ url_for('horarios.lista_horarios') }}" class="btn btn-default">
         <i class="fas fa-arrow-left"></i> Volver al listado
     </a>
 </div>
@@ -42,16 +42,15 @@
                     {% for franja in franjas %}
                     <tr>
                         <td><strong>{{ franja.dia.nombre }}</strong></td>
-
                         <td>{{ (franja.hora_entrada | string)[:5] }}</td>
                         <td>{{ (franja.hora_salida | string)[:5] }}</td>
 
                         <td class="text-right">
-                            <a href="{{ url_for('editar_franja', id=franja.id) }}" class="btn btn-warning btn-xs" title="Modificar">
+                            <a href="{{ url_for('horarios.editar_franja', id=franja.id) }}" class="btn btn-warning btn-xs" title="Modificar">
                                 <i class="fas fa-edit"></i>
                             </a>
 
-                            <a href="{{ url_for('borrar_franja', id=franja.id) }}"
+                            <a href="{{ url_for('horarios.borrar_franja', id=franja.id) }}"
                                class="btn btn-danger btn-xs"
                                title="Eliminar"
                                onclick="return confirm('¿Estás seguro de que quieres eliminar esta franja horaria?');">
@@ -61,11 +60,7 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="4" class="text-center text-muted">
-                            <br>
-                            <i class="fas fa-info-circle"></i> No hay franjas definidas para este horario.
-                            <br><br>
-                        </td>
+                        <td colspan="4" class="text-center text-muted"><br><i class="fas fa-info-circle"></i> No hay franjas definidas.<br><br></td>
                     </tr>
                     {% endfor %}
                 </tbody>

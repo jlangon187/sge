@@ -5,7 +5,7 @@
 {% block page_content %}
 <div class="page-header">
     <h1>Horarios de Trabajo</h1>
-    <a href="{{ url_for('crear_horario') }}" class="btn btn-primary">Nuevo Horario</a>
+    <a href="{{ url_for('horarios.crear_horario') }}" class="btn btn-primary">Nuevo Horario</a>
 </div>
 
 <div class="row">
@@ -20,10 +20,10 @@
                 <p><strong>Empleados:</strong> {{ horario.trabajadores|length }}</p>
                 <p><strong>Franjas definidas:</strong> {{ horario.franjas|length }}</p>
 
-                <a href="{{ url_for('detalle_horario', id=horario.id_horario) }}" class="btn btn-primary btn-sm btn-block">Gestionar Franjas</a>
+                <a href="{{ url_for('horarios.detalle_horario', id=horario.id_horario) }}" class="btn btn-primary btn-sm btn-block">Gestionar Franjas</a>
 
                 {% if horario.trabajadores|length == 0 %}
-                    <a href="{{ url_for('borrar_horario', id=horario.id_horario) }}" class="btn btn-danger btn-sm btn-block" onclick="return confirm('¿Borrar horario?')">Eliminar</a>
+                    <a href="{{ url_for('horarios.borrar_horario', id=horario.id_horario) }}" class="btn btn-danger btn-sm btn-block" onclick="return confirm('¿Borrar horario?')">Eliminar</a>
                 {% else %}
                     <button class="btn btn-default btn-sm btn-block" disabled>En uso</button>
                 {% endif %}

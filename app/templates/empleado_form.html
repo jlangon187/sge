@@ -81,7 +81,7 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <a href="{{ url_for('lista_empleados') }}" class="btn btn-default btn-block">Cancelar</a>
+                            <a href="{{ url_for('empleados.lista_empleados') }}" class="btn btn-default btn-block">Cancelar</a>
                         </div>
                         <div class="col-md-6">
                             {{ form.submit(class="btn btn-success btn-block") }}
@@ -102,7 +102,7 @@
         <h4 class="modal-title" id="myModalLabel"><i class="fas fa-lock"></i> Cambiar Contraseña</h4>
       </div>
 
-      <form method="POST" action="{{ url_for('cambiar_password_empleado', id=empleado.id_trabajador) }}">
+      <form method="POST" action="{{ url_for('empleados.cambiar_password_empleado', id=empleado.id_trabajador) }}">
           <div class="modal-body">
             {{ form_pass.hidden_tag() }}
             <p>Introduce la nueva contraseña para <strong>{{ empleado.nombre }}</strong>:</p>

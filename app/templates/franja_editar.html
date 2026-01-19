@@ -17,7 +17,7 @@
                 {{ wtf.quick_form(form, button_map={'submit': 'warning btn-block'}) }}
 
                 <br>
-                <a href="{{ url_for('detalle_horario', id=franja.id_horario) }}" class="btn btn-default btn-block">Cancelar</a>
+                <a href="{{ url_for('horarios.detalle_horario', id=franja.id_horario) }}" class="btn btn-default btn-block">Cancelar</a>
             </div>
         </div>
     </div>

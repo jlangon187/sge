@@ -18,41 +18,29 @@
     <div class="row">
         <div class="col-md-4">
             <div class="feature-box">
-                <div class="feature-icon">
-                    <i class="fas fa-users"></i>
-                </div>
+                <div class="feature-icon"><i class="fas fa-users"></i></div>
                 <div class="feature-title">Gestión de Personal</div>
-                <div class="feature-desc">
-                    Administra perfiles de empleados, datos de contacto y asignaciones de forma centralizada.
-                </div>
+                <div class="feature-desc">Administra perfiles de empleados, datos de contacto y asignaciones de forma centralizada.</div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="feature-box">
-                <div class="feature-icon">
-                    <i class="fas fa-clock"></i>
-                </div>
+                <div class="feature-icon"><i class="fas fa-clock"></i></div>
                 <div class="feature-title">Control Horario</div>
-                <div class="feature-desc">
-                    Define turnos, gestiona horarios rotativos y controla las franjas de entrada y salida fácilmente.
-                </div>
+                <div class="feature-desc">Define turnos, gestiona horarios rotativos y controla las franjas de entrada y salida fácilmente.</div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="feature-box">
-                <div class="feature-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
                 <div class="feature-title">Seguridad y Roles</div>
-                <div class="feature-desc">
-                    Acceso basado en roles (Superadmin, Admin, Empleado) para garantizar la seguridad de los datos.
-                </div>
+                <div class="feature-desc">Acceso basado en roles (Superadmin, Admin, Empleado) para garantizar la seguridad de los datos.</div>
             </div>
         </div>
     </div>
 
     <div class="text-center text-muted" style="margin-top: 50px; font-size: 12px;">
-        <p>&copy; 2026 SGE System - Javier Lanzas González -Todos los derechos reservados.</p>
+        <p>&copy; 2026 SGE System - Javier Lanzas González - Todos los derechos reservados.</p>
     </div>
 
 {% else %}
@@ -60,33 +48,20 @@
     <div class="welcome-panel">
         <div class="welcome-info">
             <h2>Bienvenido al Panel de Control, {{ usuario.nombre }}</h2>
-
             <div class="welcome-sub">
-                <span>
-                    <i class="fas fa-id-badge"></i> {{ usuario.rol.nombre_rol }}
-                </span>
-
+                <span><i class="fas fa-id-badge"></i> {{ usuario.rol.nombre_rol }}</span>
                 <span style="color: #475569;">|</span>
-
                 {% if empresa %}
-                    <span>
-                        <i class="fas fa-building"></i> {{ empresa.nombrecomercial }}
-                    </span>
+                    <span><i class="fas fa-building"></i> {{ empresa.nombrecomercial }}</span>
                 {% else %}
-                    <span>
-                        <i class="fas fa-globe"></i> Gestión Global
-                    </span>
+                    <span><i class="fas fa-globe"></i> Gestión Global</span>
                 {% endif %}
-
                 <span style="color: #475569;">|</span>
                 <span id="fecha-actual"></span>
             </div>
         </div>
-
         <div class="hidden-xs">
-            <div class="welcome-icon">
-                <i class="far fa-calendar-check"></i>
-            </div>
+            <div class="welcome-icon"><i class="far fa-calendar-check"></i></div>
         </div>
     </div>
 
@@ -102,7 +77,6 @@
             <div class="col-md-12">
                 <h4 class="text-muted text-uppercase" style="margin-bottom: 20px; font-weight:700;">Métricas Globales del Sistema</h4>
             </div>
-
             <div class="col-md-3">
                 <div class="stat-card border-blue">
                     <i class="fas fa-city icon-stat text-primary"></i>
@@ -110,7 +84,6 @@
                     <p>Empresas Registradas</p>
                 </div>
             </div>
-
             <div class="col-md-3">
                 <div class="stat-card border-green">
                     <i class="fas fa-users icon-stat text-success"></i>
@@ -118,7 +91,6 @@
                     <p>Usuarios Totales</p>
                 </div>
             </div>
-
             <div class="col-md-3">
                 <div class="stat-card border-purple">
                     <i class="fas fa-clock icon-stat text-info"></i>
@@ -126,7 +98,6 @@
                     <p>Horarios Definidos</p>
                 </div>
             </div>
-
             <div class="col-md-3">
                 <div class="stat-card border-orange">
                     <i class="fas fa-user-shield icon-stat text-warning"></i>
@@ -145,17 +116,17 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-md-4">
-                                <a href="{{ url_for('crear_empresa_admin') }}" class="quick-action-btn">
+                                <a href="{{ url_for('empresas.crear_empresa_admin') }}" class="quick-action-btn">
                                     <i class="fas fa-plus-circle"></i> Nueva Empresa
                                 </a>
                             </div>
                             <div class="col-md-4">
-                                <a href="{{ url_for('lista_empresas') }}" class="quick-action-btn">
+                                <a href="{{ url_for('empresas.lista_empresas') }}" class="quick-action-btn">
                                     <i class="fas fa-list"></i> Listar Empresas
                                 </a>
                             </div>
                             <div class="col-md-4">
-                                <a href="{{ url_for('crear_superadmin') }}" class="quick-action-btn">
+                                <a href="{{ url_for('superadmins.crear_superadmin') }}" class="quick-action-btn">
                                     <i class="fas fa-user-shield"></i> Nuevo Superadmin
                                 </a>
                             </div>
@@ -190,17 +161,17 @@
                     <h4 class="text-muted" style="margin-top: 20px; margin-bottom: 15px; font-weight:700;">ACCESOS DIRECTOS</h4>
                     <div class="row">
                         <div class="col-md-4">
-                            <a href="{{ url_for('crear_empleado') }}" class="quick-action-btn">
+                            <a href="{{ url_for('empleados.crear_empleado') }}" class="quick-action-btn">
                                 <i class="fas fa-user-plus"></i> Añadir Empleado
                             </a>
                         </div>
                         <div class="col-md-4">
-                            <a href="{{ url_for('lista_horarios') }}" class="quick-action-btn">
+                            <a href="{{ url_for('horarios.lista_horarios') }}" class="quick-action-btn">
                                 <i class="fas fa-clock"></i> Gestionar Horarios
                             </a>
                         </div>
                         <div class="col-md-4">
-                            <a href="{{ url_for('gestion_empresa') }}" class="quick-action-btn">
+                            <a href="{{ url_for('empresas.gestion_empresa') }}" class="quick-action-btn">
                                 <i class="fas fa-cogs"></i> Configurar Empresa
                             </a>
                         </div>
@@ -231,7 +202,7 @@
                                 </li>
                             </ul>
                             <hr>
-                            <a href="{{ url_for('gestion_empresa') }}" class="btn btn-default btn-block btn-sm">Editar Datos</a>
+                            <a href="{{ url_for('empresas.gestion_empresa') }}" class="btn btn-default btn-block btn-sm">Editar Datos</a>
                         </div>
                     </div>
                 </div>
