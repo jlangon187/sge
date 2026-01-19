@@ -70,7 +70,7 @@ def borrar_empresa_admin(id):
         flash('Empresa eliminada.')
     return redirect(url_for('empresas.lista_empresas'))
 
-# 5. SELECCIONAR EMPRESA (Context Switch)
+# 5. SELECCIONAR EMPRESA
 @empresas_bp.route('/seleccionar/<int:id>')
 def seleccionar_empresa(id):
     if session.get('user_role') != 'Superadministrador': return redirect(url_for('auth.login'))
@@ -89,15 +89,12 @@ def ver_registros():
     empresa_id = session.get('empresa_id')
     if not empresa_id: return redirect(url_for('main.index'))
 
-    # Filtros desde la URL (GET)
     empleado_id = request.args.get('empleado', type=int)
     fecha_desde = request.args.get('desde')
     fecha_hasta = request.args.get('hasta')
 
-    # Consulta Base
     query = Registro.query.join(Trabajador).filter(Trabajador.idEmpresa == empresa_id)
 
-    # Aplicar filtros si existen
     if empleado_id:
         query = query.filter(Registro.id_trabajador == empleado_id)
 
@@ -107,18 +104,55 @@ def ver_registros():
     if fecha_hasta:
         query = query.filter(Registro.fecha <= datetime.strptime(fecha_hasta, '%Y-%m-%d').date())
 
-    # Ordenar por fecha descendente (lo más nuevo primero)
-    registros = query.order_by(Registro.hora_entrada.desc()).all()
+    registros_db = query.order_by(Registro.hora_entrada.desc()).all()
 
-    # Para el desplegable del filtro
+    # --- PROCESAMIENTO DE HORAS EXTRA ---
+    registros_procesados = []
+    total_horas_trabajadas = 0
+    total_horas_extra = 0
+
+    for reg in registros_db:
+        horas_reales = 0
+        if reg.hora_salida:
+            diferencia = reg.hora_salida - reg.hora_entrada
+            horas_reales = diferencia.total_seconds() / 3600
+
+        horas_teoricas = 0
+        if reg.trabajador.horario:
+            dia_semana_id = reg.fecha.weekday() + 1
+
+            franjas_dia = [f for f in reg.trabajador.horario.franjas if f.id_dia == dia_semana_id]
+
+            for f in franjas_dia:
+                inicio = datetime.combine(date.min, f.hora_entrada)
+                fin = datetime.combine(date.min, f.hora_salida)
+                duracion_franja = (fin - inicio).total_seconds() / 3600
+                horas_teoricas += duracion_franja
+
+        horas_extra = 0
+        if horas_reales > horas_teoricas and horas_teoricas > 0:
+            horas_extra = horas_reales - horas_teoricas
+
+        registros_procesados.append({
+            'registro': reg,
+            'reales': horas_reales,
+            'teoricas': horas_teoricas,
+            'extra': horas_extra
+        })
+
+        total_horas_trabajadas += horas_reales
+        total_horas_extra += horas_extra
+
     empleados = Trabajador.query.filter_by(idEmpresa=empresa_id).all()
 
     return render_template('registros_list.html',
-                           registros=registros,
+                           registros=registros_procesados,
                            empleados=empleados,
                            sel_empleado=empleado_id,
                            sel_desde=fecha_desde,
-                           sel_hasta=fecha_hasta)
+                           sel_hasta=fecha_hasta,
+                           total_trabajadas=total_horas_trabajadas,
+                           total_extra=total_horas_extra)
 
 # --- LISTADO DE INCIDENCIAS ---
 @empresas_bp.route('/incidencias')

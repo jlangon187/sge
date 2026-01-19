@@ -1,10 +1,59 @@
 {% extends "base.html" %}
 
-{% block title %}Registros de Presencia{% endblock %}
+{% block title %}Registros y Horas Extra{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
-    <h1><i class="fas fa-history"></i> Historial de Fichajes</h1>
+    <h1><i class="fas fa-chart-line text-primary"></i> Control de Horas y Presencia</h1>
+</div>
+
+<div class="row" style="margin-bottom: 20px;">
+    <div class="col-md-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Total Trabajado</h3>
+            </div>
+            <div class="panel-body text-center">
+                <span style="font-size: 32px; font-weight: bold; color: #31708f;">
+                    {{ "%.2f"|format(total_trabajadas) }} h
+                </span>
+                <p class="text-muted">En el periodo seleccionado</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title">Total Horas Extra</h3>
+            </div>
+            <div class="panel-body text-center">
+                {% if total_extra > 0 %}
+                    <span style="font-size: 32px; font-weight: bold; color: #8a6d3b;">
+                        +{{ "%.2f"|format(total_extra) }} h
+                    </span>
+                {% else %}
+                    <span style="font-size: 32px; font-weight: bold; color: #ccc;">0.00 h</span>
+                {% endif %}
+                <p class="text-muted">Acumuladas en el periodo</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="well" style="height: 142px;">
+            <p><strong><i class="fas fa-filter"></i> Filtrado Actual:</strong></p>
+            <ul class="list-unstyled">
+                <li>Empleado:
+                    {% if sel_empleado %}
+                        <span class="label label-primary">Seleccionado</span>
+                    {% else %}
+                        <span class="label label-default">Todos</span>
+                    {% endif %}
+                </li>
+                <li>Desde: {{ sel_desde or 'Inicio' }}</li>
+                <li>Hasta: {{ sel_hasta or 'Hoy' }}</li>
+            </ul>
+        </div>
+    </div>
 </div>
 
 <div class="well">
@@ -28,58 +77,84 @@
             <label>Hasta:</label>
             <input type="date" name="hasta" class="form-control" value="{{ sel_hasta }}">
         </div>
-        <button type="submit" class="btn btn-primary" style="margin-left: 10px;">Filtrar</button>
+        <button type="submit" class="btn btn-primary" style="margin-left: 10px;">
+            <i class="fas fa-search"></i> Filtrar
+        </button>
         <a href="{{ url_for('empresas.ver_registros') }}" class="btn btn-default">Limpiar</a>
     </form>
 </div>
 
 <div class="panel panel-default">
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Empleado</th>
-                <th>Entrada</th>
-                <th>Salida</th>
-                <th>Estado</th>
-                <th>Duración</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for reg in registros %}
-            <tr>
-                <td><strong>{{ reg.fecha.strftime('%d/%m/%Y') }}</strong></td>
-                <td>{{ reg.trabajador.nombre }} {{ reg.trabajador.apellidos }}</td>
-                <td class="text-success"><i class="fas fa-sign-in-alt"></i> {{ reg.hora_entrada.strftime('%H:%M') }}</td>
-                <td>
-                    {% if reg.hora_salida %}
-                        <span class="text-danger"><i class="fas fa-sign-out-alt"></i> {{ reg.hora_salida.strftime('%H:%M') }}</span>
-                    {% else %}
-                        <span class="text-muted">--:--</span>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if reg.hora_salida %}
-                        <span class="label label-success">Completado</span>
-                    {% else %}
-                        <span class="label label-warning">En curso (Trabajando)</span>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if reg.hora_salida %}
-                        {% set duracion = (reg.hora_salida - reg.hora_entrada).total_seconds() / 3600 %}
-                        {{ "%.2f"|format(duracion) }} h
-                    {% else %}
-                        -
-                    {% endif %}
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="6" class="text-center text-muted">No se encontraron registros con estos filtros.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Empleado</th>
+                    <th>Horario</th>
+                    <th>Entrada / Salida</th>
+                    <th class="text-center">Teóricas</th>
+                    <th class="text-center">Trabajadas</th>
+                    <th class="text-center">Extra</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in registros %}
+                <tr>
+                    <td><strong>{{ item.registro.fecha.strftime('%d/%m/%Y') }}</strong></td>
+
+                    <td>
+                        {{ item.registro.trabajador.nombre }} {{ item.registro.trabajador.apellidos }}
+                    </td>
+
+                    <td>
+                        <small class="text-muted">{{ item.registro.trabajador.horario.nombre_horario }}</small>
+                    </td>
+
+                    <td>
+                        <div style="font-family: monospace;">
+                            <span class="text-success"><i class="fas fa-sign-in-alt"></i> {{ item.registro.hora_entrada.strftime('%H:%M') }}</span><br>
+                            {% if item.registro.hora_salida %}
+                                <span class="text-danger"><i class="fas fa-sign-out-alt"></i> {{ item.registro.hora_salida.strftime('%H:%M') }}</span>
+                            {% else %}
+                                <span class="label label-warning">ACTIVO</span>
+                            {% endif %}
+                        </div>
+                    </td>
+
+                    <td class="text-center">
+                        {{ "%.1f"|format(item.teoricas) }}h
+                    </td>
+
+                    <td class="text-center" style="font-weight: bold;">
+                        {% if item.registro.hora_salida %}
+                            {{ "%.2f"|format(item.reales) }}h
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td class="text-center">
+                        {% if item.extra > 0 %}
+                            <span class="label label-warning" style="font-size: 100%;">
+                                +{{ "%.2f"|format(item.extra) }} h
+                            </span>
+                        {% elif not item.registro.hora_salida %}
+                            <span class="text-muted">-</span>
+                        {% else %}
+                            <span class="text-success"><i class="fas fa-check"></i> Ok</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted" style="padding: 30px;">
+                        No hay registros que coincidan con los filtros.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
