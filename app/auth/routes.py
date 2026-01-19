@@ -15,7 +15,7 @@ def login():
     if form.validate_on_submit():
         usuario = Trabajador.query.filter_by(email=form.email.data).first()
 
-        if usuario and usuario.passw == form.password.data:
+        if usuario and usuario.check_password(form.password.data):
 
             if usuario.rol.nombre_rol == 'Superadministrador':
                 session['user_id'] = usuario.id_trabajador
@@ -25,7 +25,7 @@ def login():
                 session['empresa_nombre'] = "Zona Superadmin"
 
                 flash(f'Bienvenido Superadmin {usuario.nombre}')
-                return redirect(url_for('main.index')) # Redirige al dashboard principal
+                return redirect(url_for('main.index'))
 
             elif usuario.rol.nombre_rol == 'Administrador':
                 if not usuario.idEmpresa:
@@ -54,5 +54,4 @@ def login():
 def logout():
     session.clear()
     flash('Has cerrado sesión correctamente.')
-
     return redirect(url_for('main.index'))
