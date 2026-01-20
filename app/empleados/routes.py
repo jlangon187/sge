@@ -25,6 +25,7 @@ def crear_empleado():
 
     form = EmpleadoForm()
 
+    # Cargar opciones en los select
     form.id_rol.choices = [(r.id_rol, r.nombre_rol) for r in Rol.query.all()]
     form.id_horario.choices = [(h.id_horario, h.nombre_horario) for h in Horario.query.all()]
 
@@ -45,9 +46,11 @@ def crear_empleado():
                 cp=form.cp.data,
                 provincia=form.provincia.data,
                 idEmpresa=empresa_id,
+                # ASIGNACIÓN MANUAL OBLIGATORIA
                 idRol=form.id_rol.data,
                 idHorario=form.id_horario.data
             )
+            # Hash password
             nuevo_empleado.set_password(form.passw.data)
 
             db.session.add(nuevo_empleado)
@@ -72,12 +75,20 @@ def editar_empleado(id):
 
     form_pass = ChangePasswordForm()
 
+    if request.method == 'GET':
+        form.id_rol.data = empleado.idRol
+        form.id_horario.data = empleado.idHorario
+
     if form.validate_on_submit():
         existe = Trabajador.query.filter(Trabajador.nif == form.nif.data, Trabajador.id_trabajador != id).first()
         if existe:
             flash('Error: NIF duplicado.')
         else:
             form.populate_obj(empleado)
+
+            empleado.idRol = form.id_rol.data
+            empleado.idHorario = form.id_horario.data
+
             db.session.commit()
             flash('Datos actualizados.')
             return redirect(url_for('empleados.lista_empleados'))
@@ -94,7 +105,6 @@ def cambiar_password_empleado(id):
 
     form = ChangePasswordForm()
     if form.validate_on_submit():
-        # USO DE HASH AQUÍ TAMBIÉN
         empleado.set_password(form.password.data)
         db.session.commit()
         flash(f'Contraseña de {empleado.nombre} actualizada correctamente.')

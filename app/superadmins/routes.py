@@ -38,8 +38,6 @@ def crear_superadmin():
             flash(f'Error: El Email {form.email.data} ya existe.')
             return render_template('empleado_form.html', form=form, titulo="Nuevo Superadmin")
 
-        rol_super = Rol.query.filter_by(nombre_rol='Superadministrador').first()
-
         nuevo_super = Trabajador(
             nif=form.nif.data,
             nombre=form.nombre.data,
@@ -50,7 +48,7 @@ def crear_superadmin():
             localidad=form.localidad.data,
             cp=form.cp.data,
             provincia=form.provincia.data,
-            idRol=rol_super.id_rol,
+            idRol=form.id_rol.data,
             idEmpresa=None,
             idHorario=form.id_horario.data
         )
@@ -59,9 +57,10 @@ def crear_superadmin():
 
         db.session.add(nuevo_super)
         db.session.commit()
-        flash('Nuevo Superadministrador registrado correctamente.')
+        flash('Nuevo usuario registrado correctamente.')
         return redirect(url_for('superadmins.lista_superadmins'))
 
+    # Preseleccionar rol de Superadmin al entrar
     rol_super = Rol.query.filter_by(nombre_rol='Superadministrador').first()
     if request.method == 'GET' and rol_super:
         form.id_rol.data = rol_super.id_rol
@@ -84,18 +83,25 @@ def editar_superadmin(id):
 
     form_pass = ChangePasswordForm()
 
+    if request.method == 'GET':
+        form.id_rol.data = superadmin_edit.idRol
+        form.id_horario.data = superadmin_edit.idHorario
+
     if form.validate_on_submit():
         existe_nif = Trabajador.query.filter(Trabajador.nif == form.nif.data, Trabajador.id_trabajador != id).first()
         if existe_nif:
             flash(f'Error: El NIF ya pertenece a otro usuario.')
-            return render_template('empleado_form.html', form=form, form_pass=form_pass, titulo="Editar Superadmin", editando=True, empleado=superadmin_edit)
+        else:
+            form.populate_obj(superadmin_edit)
 
-        form.populate_obj(superadmin_edit)
-        superadmin_edit.idEmpresa = None
+            superadmin_edit.idRol = form.id_rol.data
+            superadmin_edit.idHorario = form.id_horario.data
 
-        db.session.commit()
-        flash('Datos actualizados.')
-        return redirect(url_for('superadmins.lista_superadmins'))
+            superadmin_edit.idEmpresa = None # Asegurar que sigue sin empresa
+
+            db.session.commit()
+            flash('Datos actualizados.')
+            return redirect(url_for('superadmins.lista_superadmins'))
 
     return render_template('empleado_form.html', form=form, form_pass=form_pass, titulo="Editar Superadmin", editando=True, empleado=superadmin_edit)
 

@@ -55,11 +55,11 @@
                             </td>
                             <td>
                                 {% if empleado.rol.nombre_rol == 'Superadministrador' %}
-                                    <span class="label-modern label-super">SUPERADMIN</span>
+                                    <span class="label-modern label-super">{{ empleado.rol.nombre_rol|upper }}</span>
                                 {% elif empleado.rol.nombre_rol == 'Administrador' %}
-                                    <span class="label-modern label-admin">ADMIN</span>
+                                    <span class="label-modern label-admin">{{ empleado.rol.nombre_rol|upper }}</span>
                                 {% else %}
-                                    <span class="label-modern label-worker">TRABAJADOR</span>
+                                    <span class="label-modern label-worker">{{ empleado.rol.nombre_rol|upper }}</span>
                                 {% endif %}
 
                                 <div style="margin-top: 5px; font-size: 12px; color: #6b7280;">

@@ -102,15 +102,8 @@
                 {% for item in registros %}
                 <tr>
                     <td><strong>{{ item.registro.fecha.strftime('%d/%m/%Y') }}</strong></td>
-
-                    <td>
-                        {{ item.registro.trabajador.nombre }} {{ item.registro.trabajador.apellidos }}
-                    </td>
-
-                    <td>
-                        <small class="text-muted">{{ item.registro.trabajador.horario.nombre_horario }}</small>
-                    </td>
-
+                    <td>{{ item.registro.trabajador.nombre }} {{ item.registro.trabajador.apellidos }}</td>
+                    <td><small class="text-muted">{{ item.registro.trabajador.horario.nombre_horario }}</small></td>
                     <td>
                         <div style="font-family: monospace;">
                             <span class="text-success"><i class="fas fa-sign-in-alt"></i> {{ item.registro.hora_entrada.strftime('%H:%M') }}</span><br>
@@ -121,11 +114,7 @@
                             {% endif %}
                         </div>
                     </td>
-
-                    <td class="text-center">
-                        {{ "%.1f"|format(item.teoricas) }}h
-                    </td>
-
+                    <td class="text-center">{{ "%.1f"|format(item.teoricas) }}h</td>
                     <td class="text-center" style="font-weight: bold;">
                         {% if item.registro.hora_salida %}
                             {{ "%.2f"|format(item.reales) }}h
@@ -133,14 +122,17 @@
                             -
                         {% endif %}
                     </td>
-
                     <td class="text-center">
-                        {% if item.extra > 0 %}
+                        {% if not item.registro.hora_salida %}
+                             <span class="text-muted">-</span>
+                        {% elif item.balance > 0.01 %}
                             <span class="label label-warning" style="font-size: 100%;">
-                                +{{ "%.2f"|format(item.extra) }} h
+                                +{{ "%.2f"|format(item.balance) }} h
                             </span>
-                        {% elif not item.registro.hora_salida %}
-                            <span class="text-muted">-</span>
+                        {% elif item.balance < -0.01 %}
+                            <span class="text-danger" style="font-weight:bold;">
+                                No ({{ "%.2f"|format(item.balance) }} h)
+                            </span>
                         {% else %}
                             <span class="text-success"><i class="fas fa-check"></i> Ok</span>
                         {% endif %}
