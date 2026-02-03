@@ -42,7 +42,7 @@ class Config:
     }
 
     # --- NUEVA CONFIGURACIÓN JWT (Seguridad) ---
-    JWT_SECRET_KEY = "clave-super-secreta-jwt" # ¡Cambiar esto en producción!
+    JWT_SECRET_KEY = "clave-super-secreta-jwt-mas-larga-y-segura"
 
     @staticmethod
     def init_app(app):

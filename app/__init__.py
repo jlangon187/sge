@@ -1,7 +1,7 @@
 from flask import Flask
 from config import config
 from .extensions import db, api, jwt, bootstrap
-from .blocklist import BLOCKLIST
+from app.models import TokenBlocklist
 from flask_migrate import Migrate
 
 def create_app(config_name):
@@ -20,7 +20,15 @@ def create_app(config_name):
     # --- CALLBACKS DE JWT (Lista Negra) ---
     @jwt.token_in_blocklist_loader
     def check_if_token_in_blocklist(jwt_header, jwt_payload):
-        return jwt_payload["jti"] in BLOCKLIST
+        """
+        Esta función se ejecuta CADA VEZ que alguien usa un token.
+        Busca si el ID del token (jti) está en la tabla de revocados.
+        """
+        jti = jwt_payload["jti"]
+        token = db.session.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
+
+        # Si token no es None, significa que está en la lista negra -> Devuelve True (Bloquear)
+        return token is not None
 
     @jwt.revoked_token_loader
     def revoked_token_callback(jwt_header, jwt_payload):
