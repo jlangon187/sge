@@ -14,7 +14,6 @@ class Empresa(db.Model):
     email = db.Column(db.String(100))
     telefono = db.Column(db.String(20))
 
-    # --- GEOLOCALIZACIÓN ---
     latitud = db.Column(db.Float, nullable=True)
     longitud = db.Column(db.Float, nullable=True)
     radio = db.Column(db.Integer, default=100)
@@ -86,7 +85,6 @@ class Registro(db.Model):
 
     id_trabajador = db.Column(db.Integer, db.ForeignKey('trabajadores.id_trabajador'), nullable=False)
 
-# --- INCIDENCIAS---
 class Incidencia(db.Model):
     __tablename__ = 'incidencias'
     id_incidencia = db.Column(db.Integer, primary_key=True)
