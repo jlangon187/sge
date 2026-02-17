@@ -60,9 +60,9 @@ def create_app(config_name):
 
     # API de Auth y Fichajes
     from app.resources.auth import blp as AuthApiBlueprint
-    api.register_blueprint(AuthApiBlueprint)
+    api.register_blueprint(AuthApiBlueprint, url_prefix='/api')
 
     from app.resources.registros import blp as RegistrosApiBlueprint
-    api.register_blueprint(RegistrosApiBlueprint)
+    api.register_blueprint(RegistrosApiBlueprint, url_prefix='/api')
 
     return app
