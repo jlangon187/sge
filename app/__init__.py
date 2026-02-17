@@ -1,6 +1,6 @@
 from flask import Flask
 from config import config
-from .extensions import db, api, jwt, bootstrap
+from .extensions import db, api, jwt, bootstrap, mail
 from app.models import TokenBlocklist
 from flask_migrate import Migrate
 
@@ -14,6 +14,7 @@ def create_app(config_name):
     bootstrap.init_app(app)
     jwt.init_app(app)
     api.init_app(app)
+    mail.init_app(app)
 
     Migrate(app, db)
 
@@ -58,11 +59,13 @@ def create_app(config_name):
     from .superadmins import superadmins_bp
     app.register_blueprint(superadmins_bp, url_prefix='/admin/superadmins')
 
-    # API de Auth y Fichajes
     from app.resources.auth import blp as AuthApiBlueprint
     api.register_blueprint(AuthApiBlueprint, url_prefix='/api')
 
     from app.resources.registros import blp as RegistrosApiBlueprint
     api.register_blueprint(RegistrosApiBlueprint, url_prefix='/api')
+
+    from app.resources.incidencias import blp as IncidenciasApiBlueprint
+    api.register_blueprint(IncidenciasApiBlueprint, url_prefix='/api')
 
     return app

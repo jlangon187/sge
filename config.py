@@ -1,14 +1,11 @@
 import os
-import time # <--- IMPORTANTE: Necesitamos importar time
+import time
 
-# --- NUEVO: FORZAR ZONA HORARIA DE MADRID ---
 # Esto obliga al servidor de PythonAnywhere a usar la hora local de España
 os.environ["TZ"] = "Europe/Madrid"
 try:
     time.tzset()
 except AttributeError:
-    # time.tzset() solo funciona en Linux (PythonAnywhere).
-    # El try/except evita que te de error si lo pruebas en Windows.
     pass
 
 class Config:
@@ -20,7 +17,6 @@ class Config:
         'pool_pre_ping': True
     }
 
-    # --- NUEVA CONFIGURACIÓN API REST (Flask-Smorest) ---
     API_TITLE = "API Control de Presencia"
     API_VERSION = "v1"
     OPENAPI_VERSION = "3.0.3"
@@ -41,8 +37,14 @@ class Config:
         },
     }
 
-    # --- NUEVA CONFIGURACIÓN JWT (Seguridad) ---
     JWT_SECRET_KEY = "clave-super-secreta-jwt-mas-larga-y-segura"
+
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or 'jlangon187@iesfuengirola1.es'
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or 'xpzf pooz alhx mfnz'
+    MAIL_DEFAULT_SENDER = ('Control Presencia', MAIL_USERNAME)
 
     @staticmethod
     def init_app(app):

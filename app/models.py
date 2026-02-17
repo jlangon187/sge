@@ -63,9 +63,11 @@ class Trabajador(db.Model):
     cp = db.Column(db.String(10))
     provincia = db.Column(db.String(50))
 
-    idEmpresa = db.Column(db.Integer, db.ForeignKey('empresas.id_empresa'), nullable=True) # Null para Superadmin
+    idEmpresa = db.Column(db.Integer, db.ForeignKey('empresas.id_empresa'), nullable=True)
     idRol = db.Column(db.Integer, db.ForeignKey('roles.id_rol'), nullable=False)
     idHorario = db.Column(db.Integer, db.ForeignKey('horarios.id_horario'), nullable=True)
+
+    fcm_token = db.Column(db.String(255), nullable=True)
 
     registros = db.relationship('Registro', backref='trabajador', lazy=True, cascade="all, delete-orphan")
     incidencias = db.relationship('Incidencia', backref='trabajador', lazy=True, cascade="all, delete-orphan")
@@ -79,15 +81,20 @@ class Trabajador(db.Model):
 class Registro(db.Model):
     __tablename__ = 'registros'
     id_registro = db.Column(db.Integer, primary_key=True)
-    fecha = db.Column(db.Date, nullable=False, default=datetime.utcnow) # Útil para filtrar por día
+    fecha = db.Column(db.Date, nullable=False, default=datetime.utcnow)
     hora_entrada = db.Column(db.DateTime, nullable=False)
-    hora_salida = db.Column(db.DateTime, nullable=True) # Puede ser Null si aún no ha salido
+    hora_salida = db.Column(db.DateTime, nullable=True)
+
+    horas_extra = db.Column(db.Float, default=0.0)
 
     id_trabajador = db.Column(db.Integer, db.ForeignKey('trabajadores.id_trabajador'), nullable=False)
 
 class Incidencia(db.Model):
     __tablename__ = 'incidencias'
     id_incidencia = db.Column(db.Integer, primary_key=True)
+
+    titulo = db.Column(db.String(100), nullable=False, default="Incidencia")
+
     fecha_hora = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     descripcion = db.Column(db.Text, nullable=False)
 

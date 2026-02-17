@@ -61,7 +61,7 @@ def detalle_horario(id):
     horario = Horario.query.get_or_404(id)
     form = FranjaForm()
     # Cargamos los días dinámicamente
-    form.id_dia.choices = [(d.id, d.nombre) for d in Dia.query.all()]
+    form.id_dia.choices = [(d.id, d.nombre) for d in Dia.query.order_by(Dia.id).all()]
 
     if form.validate_on_submit():
         nuevo_inicio = form.hora_entrada.data
@@ -94,7 +94,6 @@ def detalle_horario(id):
                 flash('Franja añadida correctamente.')
                 return redirect(url_for('horarios.detalle_horario', id=id))
 
-    # Ordenamos las franjas para verlas bonitas (Lunes a Domingo, mañana a tarde)
     franjas = Franjas.query.filter_by(id_horario=id).join(Dia).order_by(Dia.id, Franjas.hora_entrada).all()
     return render_template('horario_detalle.html', horario=horario, franjas=franjas, form=form)
 
@@ -104,9 +103,9 @@ def editar_franja(id):
     if 'user_id' not in session: return redirect(url_for('auth.login'))
 
     franja = Franjas.query.get_or_404(id)
-    form = FranjaForm()
+    form = FranjaForm(obj=franja)
     form.submit.label.text = 'Guardar Cambios'
-    form.id_dia.choices = [(d.id, d.nombre) for d in Dia.query.all()]
+    form.id_dia.choices = [(d.id, d.nombre) for d in Dia.query.order_by(Dia.id).all()]
 
     if form.validate_on_submit():
         nuevo_inicio = form.hora_entrada.data
@@ -116,7 +115,6 @@ def editar_franja(id):
         if nuevo_inicio >= nuevo_fin:
             flash('Error: La hora de salida debe ser posterior a la de entrada.')
         else:
-            # Comprobamos solapamiento excluyendo la propia franja que editamos
             franjas_existentes = Franjas.query.filter(
                 Franjas.id_horario == franja.id_horario,
                 Franjas.id_dia == dia_seleccionado,

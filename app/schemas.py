@@ -27,3 +27,15 @@ class RegistroSchema(Schema):
 class FichajeSchema(Schema):
     latitud = fields.Float(required=True)
     longitud = fields.Float(required=True)
+
+class IncidenciaSchema(Schema):
+    id_incidencia = fields.Int(dump_only=True)
+    titulo = fields.Str(required=True)
+    descripcion = fields.Str(required=True)
+    fecha_hora = fields.DateTime(dump_only=True)
+
+class ResetRequestSchema(Schema):
+    email = fields.Email(required=True)
+
+class ResetPasswordSchema(Schema):
+    password = fields.Str(required=True)
