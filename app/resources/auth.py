@@ -63,7 +63,7 @@ class ResetPasswordRequest(MethodView):
         reset_token = create_access_token(identity=str(usuario.id_trabajador), expires_delta=timedelta(minutes=15))
 
         # Crear el link
-        link = f"https://javiliyors.eu.pythonanywhere.com/reset-password/{reset_token}"
+        link = f"https://javiliyors.eu.pythonanywhere.com/auth/reset-password/{reset_token}"
 
         msg = Message("Recuperar Contraseña - Control Presencia",
                       recipients=[usuario.email])
