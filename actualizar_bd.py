@@ -26,4 +26,11 @@ with app.app_context():
         except:
              print("La columna titulo ya existía.")
 
+        try:
+            conn.execute(text("ALTER TABLE registros ADD COLUMN latitud FLOAT"))
+            conn.execute(text("ALTER TABLE registros ADD COLUMN longitud FLOAT"))
+            print("Columnas de mapa añadidas.")
+        except:
+            print("Las columnas de mapa ya existían.")
+
         conn.commit()

@@ -86,6 +86,8 @@ class Registro(db.Model):
     hora_salida = db.Column(db.DateTime, nullable=True)
 
     horas_extra = db.Column(db.Float, default=0.0)
+    latitud = db.Column(db.Float, nullable=True)
+    longitud = db.Column(db.Float, nullable=True)
 
     id_trabajador = db.Column(db.Integer, db.ForeignKey('trabajadores.id_trabajador'), nullable=False)
 

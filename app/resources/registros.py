@@ -2,7 +2,7 @@ from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models import Registro, Trabajador, Franjas, db
-from app.schemas import FichajeSchema
+from app.schemas import FichajeSchema, RegistroSchema
 from datetime import datetime, timedelta
 import pytz  # <--- IMPORTANTE: Necesitamos esto para la hora de España
 from sqlalchemy import func
@@ -78,7 +78,9 @@ class FicharEntrada(MethodView):
             fecha=fecha_hoy,
             hora_entrada=ahora_naive,
             id_trabajador=current_user_id,
-            horas_extra=0.0
+            horas_extra=0.0,
+            latitud=fichaje_data.get("latitud"),
+            longitud=fichaje_data.get("longitud")
         )
         db.session.add(nuevo_registro)
         db.session.commit()
@@ -155,3 +157,22 @@ class FichajesList(MethodView):
                 "horas_extra": reg.horas_extra
             })
         return resultado
+
+@blp.route("/admin/registros/<int:id_trabajador>")
+class HistorialAdmin(MethodView):
+    @jwt_required()
+    @blp.response(200, RegistroSchema(many=True))
+    def get(self, id_trabajador):
+        """Ver historial de un empleado específico"""
+        current_user_id = get_jwt_identity()
+        admin = Trabajador.query.get(current_user_id)
+        empleado = Trabajador.query.get_or_404(id_trabajador)
+
+        if admin.rol.nombre_rol != 'Superadministrador':
+            if not admin.idEmpresa:
+                abort(403, message="Acceso denegado. No tienes empresa asignada.")
+            if empleado.idEmpresa != admin.idEmpresa:
+                abort(403, message="Este empleado no pertenece a tu empresa.")
+
+        return Registro.query.filter_by(id_trabajador=id_trabajador)\
+            .order_by(Registro.fecha.desc(), Registro.hora_entrada.desc()).all()

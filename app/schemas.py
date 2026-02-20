@@ -23,6 +23,8 @@ class RegistroSchema(Schema):
     fecha = fields.Date(dump_only=True)
     hora_entrada = fields.DateTime(dump_only=True)
     hora_salida = fields.DateTime(dump_only=True)
+    latitud = fields.Float(dump_only=True)
+    longitud = fields.Float(dump_only=True)
 
 class FichajeSchema(Schema):
     latitud = fields.Float(required=True)
@@ -39,3 +41,7 @@ class ResetRequestSchema(Schema):
 
 class ResetPasswordSchema(Schema):
     password = fields.Str(required=True)
+
+class EmpresaListaSchema(Schema):
+    id_empresa = fields.Int()
+    nombrecomercial = fields.Str()

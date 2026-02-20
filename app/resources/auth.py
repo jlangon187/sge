@@ -1,12 +1,12 @@
-from flask import url_for, render_template_string
+from flask import url_for, render_template_string, request
 from flask_mail import Message
 from app.extensions import mail
 from datetime import timedelta
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt, get_jwt_identity
-from app.models import Trabajador, TokenBlocklist, db
-from app.schemas import UserLoginSchema, PerfilSchema, ResetRequestSchema, ResetPasswordSchema
+from app.models import Trabajador, TokenBlocklist, db, Empresa
+from app.schemas import UserLoginSchema, PerfilSchema, ResetRequestSchema, ResetPasswordSchema, EmpresaListaSchema
 
 blp = Blueprint("Auth API", "auth_api", description="Autenticación y Tokens JWT")
 
@@ -14,12 +14,21 @@ blp = Blueprint("Auth API", "auth_api", description="Autenticación y Tokens JWT
 class UserLogin(MethodView):
     @blp.arguments(UserLoginSchema)
     def post(self, user_data):
-        """Inicia sesión y devuelve un Token de Acceso"""
+        """Inicia sesión y devuelve Token, Nombre Completo y Rol"""
         usuario = Trabajador.query.filter_by(email=user_data["email"]).first()
 
         if usuario and usuario.check_password(user_data["password"]):
             access_token = create_access_token(identity=str(usuario.id_trabajador))
-            return {"access_token": access_token}
+
+            nombre_rol = "Trabajador" # Por defecto
+            if usuario.rol:
+                nombre_rol = usuario.rol.nombre_rol
+
+            return {
+                "access_token": access_token,
+                "nombre": f"{usuario.nombre} {usuario.apellidos}",
+                "rol": nombre_rol
+            }
 
         abort(401, message="Credenciales inválidas.")
 
@@ -92,3 +101,35 @@ class ResetPassword(MethodView):
         db.session.commit()
 
         return {"message": "Contraseña actualizada correctamente."}, 200
+
+@blp.route("/admin/empresas")
+class ListaEmpresasAdmin(MethodView):
+    @jwt_required()
+    @blp.response(200, EmpresaListaSchema(many=True))
+    def get(self):
+        """(SUPERADMIN) Listar todas las empresas para el selector"""
+        current_user_id = get_jwt_identity()
+        admin = Trabajador.query.get(current_user_id)
+        if admin.rol.nombre_rol != 'Superadministrador':
+            abort(403, message="Acceso denegado. Solo Superadmin.")
+        return Empresa.query.all()
+
+@blp.route("/admin/empleados")
+class ListaEmpleadosAdmin(MethodView):
+    @jwt_required()
+    @blp.response(200, PerfilSchema(many=True))
+    def get(self):
+        """Listar mis empleados / Listar empleados por empresa"""
+        current_user_id = get_jwt_identity()
+        admin = Trabajador.query.get(current_user_id)
+
+        empresa_id = request.args.get("empresa_id")
+
+        if admin.rol.nombre_rol == 'Superadministrador':
+            if not empresa_id:
+                abort(400, message="Debes indicar empresa_id.")
+            return Trabajador.query.filter_by(idEmpresa=empresa_id).all()
+        else:
+            if not admin.idEmpresa:
+                 abort(403, message="No eres administrador de empresa.")
+            return Trabajador.query.filter_by(idEmpresa=admin.idEmpresa).all()
